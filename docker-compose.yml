@@ -1,18 +1,5 @@
 services:
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - wordpress
-
-  db:
+  wordpress-db:
     image: mariadb:11
     restart: unless-stopped
     environment:
@@ -32,14 +19,17 @@ services:
     image: wordpress:6.7-php8.3-apache
     restart: unless-stopped
     depends_on:
-      db:
+      wordpress-db:
         condition: service_healthy
+    ports:
+      # pas de reverse proxy intégré : le site est servi directement sur le port 80
+      - "80:80"
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: wordpress-db
       WORDPRESS_DB_NAME: ${DB_NAME}
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
-      # derrière Caddy, pour que WordPress génère des URLs https
+      # derrière un reverse proxy (si ajouté plus tard), pour que WordPress génère des URLs https
       WORDPRESS_CONFIG_EXTRA: |
         if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
           $$_SERVER['HTTPS'] = 'on';
@@ -47,10 +37,8 @@ services:
     volumes:
       - wp_data:/var/www/html
       # thème enfant versionné dans Git, monté dans le conteneur
-      - ./wp-content/themes/boutique-enfant:/var/www/html/wp-content/themes/boutique-enfant:ro
+      - ./wp-content/themes/cissounette:/var/www/html/wp-content/themes/cissounette:ro
 
 volumes:
-  caddy_data:
-  caddy_config:
   db_data:
   wp_data:

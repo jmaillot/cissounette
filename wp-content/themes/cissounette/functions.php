@@ -1,17 +1,17 @@
 <?php
 /**
- * Fonctions du thème enfant Boutique Artisanale.
- * Chargement du CSS parent + personalisations légères.
+ * Fonctions du thème enfant Cissounette.
+ * Chargement du CSS parent (Astra) + personalisations légères.
  */
 add_action( 'wp_enqueue_scripts', function () {
     wp_enqueue_style(
-        'storefront-parent',
+        'astra-parent',
         get_template_directory_uri() . '/style.css'
     );
     wp_enqueue_style(
-        'boutique-enfant',
+        'cissounette',
         get_stylesheet_uri(),
-        array( 'storefront-parent' ),
+        array( 'astra-parent' ),
         wp_get_theme()->get( 'Version' )
     );
 }, 20 );

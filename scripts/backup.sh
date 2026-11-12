@@ -12,7 +12,7 @@ DEST="$BACKUP_DIR/$STAMP"
 mkdir -p "$DEST"
 
 # 1. Base de données
-docker compose exec -T db mariadb-dump -u"${DB_USER:-wordpress}" \
+docker compose exec -T wordpress-db mariadb-dump -u"${DB_USER:-wordpress}" \
   -p"${DB_PASSWORD:?DB_PASSWORD manquant}" "${DB_NAME:-wordpress}" \
   | gzip > "$DEST/db.sql.gz"
 
