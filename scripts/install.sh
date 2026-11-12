@@ -16,7 +16,7 @@ mkdir -p wp-content/themes/cissounette
 docker compose up -d
 echo ""
 echo "✅ Stack démarrée."
-echo "   Site      : http://$(hostname -I | awk '{print $1}') (port 80, sans HTTPS intégré)"
+echo "   Site      : http://$(hostname -I | awk '{print $1}') (accessible via Traefik une fois le domaine/labels configurés)"
 echo "   Admin WP  : /wp-admin"
 echo ""
 echo "Ensuite, dans WordPress :"

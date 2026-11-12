@@ -1,13 +1,14 @@
 # Boutique Cissounette — WordPress + WooCommerce sur VPS (Docker)
 
 Stack complète, prête à déployer : WordPress, WooCommerce-ready, sauvegardes et déploiement par Git.
-Le site est servi directement sur le port 80 (HTTP). Pour le HTTPS, placez un reverse proxy
-devant (Caddy, Traefik, Nginx Proxy Manager…) ou utilisez un tunnel type Cloudflare.
+Le HTTPS est assuré par le **Traefik déjà présent sur le VPS** : la stack rejoint son réseau
+Docker et expose des labels de routage (à adapter : domaine, réseau, resolver — placeholders
+`domain.tld` / `proxy` / `le` dans `docker-compose.yml`).
 
 ## Structure
 
 ```
-├── docker-compose.yml          # Stack : WordPress + MariaDB (port 80, sans reverse proxy intégré)
+├── docker-compose.yml          # Stack : WordPress + MariaDB, routage par le Traefik du VPS
 ├── .env.example                # Secrets à copier en .env (jamais commité)
 ├── wp-content/themes/cissounette/       # Thème enfant d'Astra (couleurs, marque)
 ├── scripts/
@@ -27,19 +28,20 @@ git clone https://github.com/<vous>/boutique-artisanale.git /opt/boutique
 cd /opt/boutique
 cp .env.example .env        # remplir les mots de passe !
 nano .env
+nano docker-compose.yml     # adapter les placeholders Traefik : domain.tld, réseau proxy, resolver le
 
-# 3. Ouvrir le port 80 (et 22) dans le pare-feu du VPS
+# 3. Pointer le DNS : enregistrement A domaine -> IP du VPS
 
 # 4. Lancer
 ./scripts/install.sh
 ```
 
-Le site est accessible en HTTP sur le port 80. Le HTTPS n'est pas géré par cette stack :
-ajoutez un reverse proxy devant (Caddy, Nginx Proxy Manager…) ou un tunnel Cloudflare.
+Traefik (déjà présent sur le VPS) route le domaine vers le conteneur WordPress et obtient
+le certificat HTTPS automatiquement dès que le DNS pointe.
 
 ## Après l'installation (admin, aucune compétence technique)
 
-1. Ouvrir `http://<IP-du-VPS>/wp-admin` et finir l'assistant WordPress (si vous ajoutez le HTTPS plus tard, mettez ensuite à jour l'adresse du site dans Réglages → Général)
+1. Ouvrir `https://domain.tld/wp-admin` et finir l'assistant WordPress
 2. **Plugins → Ajouter** : installer *WooCommerce* (assistant de config boutique en français) et *WooCommerce Stripe Gateway* (coller les clés API Stripe)
 3. **Apparence → Thèmes → Ajouter** : installer le thème **Astra**, puis activer *Cissounette* (thème enfant d'Astra, déjà présent dans le dépôt)
 4. **Produits → Ajouter** : titre, description, prix, glisser-déposer les photos
@@ -71,5 +73,5 @@ Garde une copie externe : snapshot VPS chez l'hébergeur + copie du dossier
 - [ ] UFW : ouvrir uniquement 22, 80, 443
 - [ ] `apt update && apt upgrade` régulier (ou `unattended-upgrades`)
 - [ ] Plugin Wordfence côté WordPress
-- [ ] Monitoring : UptimeRobot sur `http://<IP-du-VPS>`
+- [ ] Monitoring : UptimeRobot sur `https://domain.tld`
 - [ ] Emails WooCommerce via SMTP externe (plugin WP Mail SMTP + Brevo)

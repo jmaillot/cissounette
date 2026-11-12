@@ -21,23 +21,36 @@ services:
     depends_on:
       wordpress-db:
         condition: service_healthy
-    ports:
-      # pas de reverse proxy intégré : le site est servi directement sur le port 80
-      - "80:80"
+    # pas de port publié : le trafic arrive via le réseau Docker du Traefik existant
     environment:
       WORDPRESS_DB_HOST: wordpress-db
       WORDPRESS_DB_NAME: ${DB_NAME}
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
-      # derrière un reverse proxy (si ajouté plus tard), pour que WordPress génère des URLs https
+      # derrière Traefik : WordPress doit générer des URLs https
       WORDPRESS_CONFIG_EXTRA: |
         if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
           $$_SERVER['HTTPS'] = 'on';
         }
+    labels:
+      # === À ADAPTER : domaine, réseau et resolver de votre Traefik ===
+      - traefik.enable=true
+      - traefik.http.routers.cissounette.rule=Host(`domain.tld`)
+      - traefik.http.routers.cissounette.entrypoints=websecure
+      - traefik.http.routers.cissounette.tls.certresolver=le
+      - traefik.http.services.cissounette.loadbalancer.server.port=80
     volumes:
       - wp_data:/var/www/html
       # thème enfant versionné dans Git, monté dans le conteneur
       - ./wp-content/themes/cissounette:/var/www/html/wp-content/themes/cissounette:ro
+    networks:
+      - default
+      # nom du réseau externe partagé avec votre Traefik
+      - proxy
+
+networks:
+  proxy:
+    external: true
 
 volumes:
   db_data:
