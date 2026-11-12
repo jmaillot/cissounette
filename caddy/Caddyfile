@@ -1,0 +1,18 @@
+# Remplacez par votre vrai domaine après l'avoir acheté
+votre-domaine.fr {
+    reverse_proxy wordpress:80
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+    }
+    # Taille max des uploads (photos produits)
+    request_body {
+        max_size 64MB
+    }
+}
+
+# Redirection www -> domaine nu (adaptez si besoin)
+www.votre-domaine.fr {
+    redir https://votre-domaine.fr{uri} permanent
+}

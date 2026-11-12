@@ -1,0 +1,15 @@
+# Secrets — jamais commités
+.env
+*.env
+
+# Backups et logs
+*.sql.gz
+*.tar.gz
+*.log
+/backups/
+
+# OS / éditeur
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

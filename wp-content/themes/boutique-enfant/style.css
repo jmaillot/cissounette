@@ -1,0 +1,48 @@
+/*
+Theme Name: Boutique Artisanale — Enfant Storefront
+Description: Thème enfant de Storefront pour la boutique artisanale. Personnalisez les couleurs et la marque ici.
+Template: storefront
+Version: 1.0.0
+*/
+
+/* ============================================================
+   IDENTITÉ DE MARQUE — modifiez ces variables, tout suit.
+   ============================================================ */
+:root {
+    --boutique-couleur-primaire: #8b5e3c;      /* brun artisanal */
+    --boutique-couleur-secondaire: #c49a6c;    /* caramel */
+    --boutique-couleur-accent: #4a6b57;        /* vert sauge */
+    --boutique-couleur-fond: #faf6f0;          /* lin clair */
+    --boutique-couleur-texte: #3a3226;
+}
+
+/* Application générale */
+body {
+    background-color: var(--boutique-couleur-fond);
+    color: var(--boutique-couleur-texte);
+}
+
+/* Boutons et prix */
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit,
+a.button {
+    background-color: var(--boutique-couleur-primaire);
+    color: #fff;
+    border-radius: 6px;
+}
+.woocommerce a.button:hover,
+.woocommerce button.button:hover {
+    background-color: var(--boutique-couleur-secondaire);
+}
+.woocommerce ul.products li.product .price,
+.woocommerce div.product p.price {
+    color: var(--boutique-couleur-accent);
+}
+
+/* En-tête : le logo est ajouté via Apparence > Personnaliser > Identité du site */
+.site-header {
+    background: #fff;
+    border-bottom: 2px solid var(--boutique-couleur-secondaire);
+}
